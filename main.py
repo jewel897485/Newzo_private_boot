@@ -9,7 +9,7 @@ BOT_TOKEN = "7675331377:AAGjh6WPDztxT-FIYkBNpDkrpfyxq1Pk5kc"  # এখানে 
 BOT_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 # ✅ অথরাইজড ইউজার আইডি (OWNER_LIST)
-OWNER_IDS = [1414414216]  # এখানে আপনার বা ওনার ইউজার আইডি বসবে
+OWNER_IDS = [1414414216, 7728185213]  # এখানে আপনার বা ওনার ইউজার আইডি বসবে
 
 # 📤 গুগল শিট ওয়েবহুক URL
 GOOGLE_SHEET_WEBHOOK = "https://script.google.com/macros/s/AKfycbwkMMe401QPlBeOsypfnxu_qXcJB5qjq5Y_P7q3WXASj8FdCjHAtq3ZWRt-6_hJMiCsvQ/exec"
@@ -60,7 +60,7 @@ def webhook():
                     delete_message(chat_id, message_id)
         else:
             # ❌ Unauthorized User
-            send_message(chat_id, "*❌ দুঃখিত! আমি আপনার জন্য কাজ করতে পারবো না 🥱*")
+            send_message(chat_id, "*❌ দুঃখিত! আমি আপনার জন্য কাজ করতে পারবো না 😴*")
 
     return "ok", 200
 
