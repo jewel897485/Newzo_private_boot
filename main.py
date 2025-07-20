@@ -1,41 +1,43 @@
-from fastapi import FastAPI, Request
+from flask import Flask, request
 import requests
-import os
 
-app = FastAPI()
+app = Flask(__name__)
 
+# 🔐 এখানে আপনার টেলিগ্রাম বট টোকেন বসানো হয়েছে
 BOT_TOKEN = "7675331377:AAGjh6WPDztxT-FIYkBNpDkrpfyxq1Pk5kc"
-OWNER_ID = "1414414216"
-WEB_APP_URL = "https://script.google.com/macros/s/your-google-webapp-id/exec"
 
-@app.post("/your_custom_webhook_path")
-async def telegram_webhook(req: Request):
-    data = await req.json()
-    message = data.get("message") or {}
-    text = message.get("text", "")
-    chat_id = message.get("chat", {}).get("id")
+# ✅ এখানে আপনার টেলিগ্রাম ইউজার আইডি বসানো হয়েছে (আপনি যিনি বট চালাতে পারবেন)
+OWNER_ID = 1414414216
 
-    if not text.startswith("http"):
-        return {"status": "ignored"}
+# 📦 টেলিগ্রাম মেসেজ পাঠানোর জন্য ফাংশন
+def send_message(chat_id, text):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {"chat_id": chat_id, "text": text}
+    requests.post(url, data=data)
 
-    # Send to Google Sheet
-    try:
-        requests.post(WEB_APP_URL, data={"link": text})
-    except Exception as e:
-        print("Failed to send to WebApp:", e)
+# 🌐 ওয়েবহুকের মাধ্যমে আপডেট রিসিভ করার রুট
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.get_json()
+    if "message" in data:
+        message = data["message"]
+        chat_id = message["chat"]["id"]
+        text = message.get("text", "")
 
-    # Reply with the link only
-    requests.post(
-        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-        data={"chat_id": chat_id, "text": text}
-    )
+        if text == "/start":
+            # 🧔 যদি আপনি স্টার্ট করেন
+            if chat_id == OWNER_ID:
+                send_message(chat_id, "👋 Welcome boss! আমি আপনার জন্য প্রস্তুত 😊")
+            else:
+                # ❌ যদি অন্য কেউ স্টার্ট করে
+                send_message(chat_id, "⚠️ দুঃখিত! আপনার জন্য আমি কাজ করতে পারবো না।")
+    return "ok"
 
-    return {"ok": True}
+# 🟢 রুট "/" শুধু সার্ভার চেক করার জন্য
+@app.route("/")
+def home():
+    return "✅ Bot is running!"
 
-@app.get("/")
-def root():
-    return {"message": "Bot is running"}
-
+# 🔁 Render সার্ভারে অ্যাপ চালু রাখার জন্য
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(host="0.0.0.0", port=10000)
