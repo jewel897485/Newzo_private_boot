@@ -7,7 +7,7 @@ app = Flask(__name__)
 BOT_TOKEN = "7675331377:AAGjh6WPDztxT-FIYkBNpDkrpfyxq1Pk5kc"
 
 # ✅ একাধিক অথরাইজড ইউজার আইডি (OWNER_LIST)
-OWNER_IDS = [1414414216, 7728185213]
+OWNER_IDS = [1414414216]
 
 # 📦 মেসেজ পাঠানোর ফাংশন
 def send_message(chat_id, text):
